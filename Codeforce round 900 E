@@ -1,0 +1,59 @@
+#include<bits/stdc++.h>  //st表+二分
+#define int long long
+using namespace std;
+int l,k;
+const int N = 2e5 + 10;
+int Logn[N], f[N][25];
+inline int read()
+{
+	int x=0,f=1;char ch=getchar();
+	while (ch<'0'||ch>'9'){if (ch=='-') f=-1;ch=getchar();}
+	while (ch>='0'&&ch<='9'){x=x*10+ch-48;ch=getchar();}
+	return x*f;
+}
+void pre()
+{
+    Logn[1] = 0;
+    Logn[2] = 1;
+    for(int i=3;i<=N;i++)
+        Logn[i] = Logn[i/2] + 1;
+}
+bool check(int mid)
+{
+    int s = Logn[mid - l + 1];
+    return (f[l][s] & f[mid-(1<<s)+1][s])>=k;
+}
+void solve()
+{
+    int n; cin>>n;
+    for(int i=1;i<=n;i++) f[i][0] = read();
+    pre();
+    for(int j=1;j<25;j++)
+        for(int i=1;i+(1<<j)-1<=n;i++)
+            f[i][j] = f[i][j-1] & f[i+(1<<(j-1))][j-1];
+    int q; cin>>q;
+    while(q--)
+    {
+        l = read(); k = read();
+        int ll, rr;
+        ll = l, rr = n;
+        while(ll<rr)
+        {
+            int mid =(ll + rr + 1)/2;
+            if(check(mid)) ll = mid;
+            else rr = mid -1;
+        }
+        if(check(ll))
+            cout<<ll<<" ";
+        else 
+            cout<<"-1"<<" ";
+    }   
+    cout<<endl;
+}
+
+signed main()
+{
+    int T; cin>>T;
+    while(T--) solve();
+    return 0; 
+}
